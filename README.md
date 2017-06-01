@@ -1,4 +1,4 @@
-# This is the Arduino IDE & SD card library using the UTF8_to_Shift_JIS conversion table for the ESP8266.
+# ESP32_SD_UTF8toSJIS
 
 これは Arduino core for the ESP32 ( ESP-WROOM-32 )の Arduino IDE ライブラリです。  
 Version 1.0  
