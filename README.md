@@ -1,7 +1,7 @@
 # ESP32_SD_UTF8toSJIS
 
 これは Arduino core for the ESP32 ( ESP-WROOM-32 )の Arduino IDE ライブラリです。  
-Version 1.0  
+Version 1.1  
   
 SPI接続 ( VSPI接続 )の micro SD カードから読み込むためのものです。  
 UTF8 to Shift_JIS 変換テーブルファイル "Utf8Sjis.tbl" を予めSDカードにコピーしておく必要があります。  
@@ -11,6 +11,11 @@ UTF-8コードのString文字列をShift_JIS文字列コードに変換できま
 JIS第一水準、第二水準、１３区、半角カナが変換可能  
   
 【更新履歴】  
+(1.1)  
+ファイルハンドル名 _UtoS を外部のソースから参照できるようにしました。  
+サンプルスケッチを参照してください。  
+同時に開くファイル数を節約できます。  
+  
 (1.0)  
 ESP32 用リリース  
   

@@ -1,6 +1,6 @@
 /*
   ESP32_SD_UTF8toSJIS.cpp - Arduino core for the ESP32 Library.
-  Beta version 1.0
+  Beta version 1.1
 
   This is a library for converting from UTF-8 code string to Shift_JIS code string.
   In advance, you need to upload a conversion table file Utf8Sjis.tbl using micro SD card & ESP-WROOM-32 ( ESP32 ).
@@ -38,9 +38,11 @@ void ESP32_SD_UTF8toSJIS::ESP32_SD_UTF8toSJIS_Init(const char* UTF8SJIS_file)
 {
   Serial.begin(115200);
   
+  SD.begin(5, SPI, 24000000, "/sd");
+  
   Serial.println("card initialized.");
-  _U_UtoS = SD.open(UTF8SJIS_file, FILE_READ);
-  if (!_U_UtoS) {
+  _UtoS = SD.open(UTF8SJIS_file, FILE_READ);
+  if (!_UtoS) {
     Serial.print(UTF8SJIS_file);
     Serial.println(" File not found");
     return;
@@ -54,7 +56,7 @@ void ESP32_SD_UTF8toSJIS::ESP32_SD_UTF8toSJIS_Init(const char* UTF8SJIS_file)
 //**************フォントファイルクローズ********************
 void ESP32_SD_UTF8toSJIS::ESP32_SD_UTF8toSJIS_Close(){
   delay(1);
-  _U_UtoS.close();
+  _UtoS.close();
   delay(1);
   Serial.println("--------------3 files closed");
 }
@@ -69,14 +71,14 @@ uint16_t ESP32_SD_UTF8toSJIS::UTF8_to_SJIS(String strUTF8, uint8_t* sjis_byte)
   while(strUTF8[fnt_cnt] != '\0'){
     if(strUTF8[fnt_cnt]>=0xC2 && strUTF8[fnt_cnt]<=0xD1){//2バイト文字
       ESP32_SD_UTF8toSJIS::UTF8_To_SJIS_code_cnv(strUTF8[fnt_cnt],strUTF8[fnt_cnt+1],0x00, &sp_addres);
-      ESP32_SD_UTF8toSJIS::SD_Flash_UTF8SJIS_Table_Read(_U_UtoS, sp_addres, SJ);
+      ESP32_SD_UTF8toSJIS::SD_Flash_UTF8SJIS_Table_Read(_UtoS, sp_addres, SJ);
       sjis_byte[sj_cnt] = SJ[0];
       sjis_byte[sj_cnt+1] = SJ[1];
       sj_cnt = sj_cnt + 2;
       fnt_cnt = fnt_cnt + 2;
     }else if(strUTF8[fnt_cnt]>=0xE2 && strUTF8[fnt_cnt]<=0xEF){
       ESP32_SD_UTF8toSJIS::UTF8_To_SJIS_code_cnv(strUTF8[fnt_cnt],strUTF8[fnt_cnt+1],strUTF8[fnt_cnt+2], &sp_addres);
-      ESP32_SD_UTF8toSJIS::SD_Flash_UTF8SJIS_Table_Read(_U_UtoS, sp_addres, SJ);
+      ESP32_SD_UTF8toSJIS::SD_Flash_UTF8SJIS_Table_Read(_UtoS, sp_addres, SJ);
       if((SJ[0]>=0xA1 && SJ[0]<=0xDF)){ //Shift_JISで半角カナコードが返ってきた場合の対処
         sjis_byte[sj_cnt] = SJ[0];
         sj_cnt++;
