@@ -1,6 +1,6 @@
 /*
   ESP32_SD_UTF8toSJIS.cpp - Arduino core for the ESP32 Library.
-  Beta version 1.21
+  Beta version 1.22
 
   This is a library for converting from UTF-8 code string to Shift_JIS code string.
   In advance, you need to upload a conversion table file Utf8Sjis.tbl using micro SD card & ESP-WROOM-32 ( ESP32 ).
@@ -192,10 +192,15 @@ void ESP32_SD_UTF8toSJIS::UTF8_To_SJIS_code_cnv(uint8_t utf8_1, uint8_t utf8_2, 
 void ESP32_SD_UTF8toSJIS::SD_Flash_UTF8SJIS_Table_Read(File ff, uint32_t addrs, uint8_t* buf)
 {
   if(ff){
-    ff.seek(addrs);
-    ff.read(buf, 2);
+    if(ff.seek(addrs)){
+      ff.read(buf, 2);
+    }else{
+      Serial.println(F(" Cannot file.seek in SD file system"));
+      return;
+    }
   }else{
-    Serial.println(" UTF8toSjis file has not been uploaded to the flash in SD file system");
+    Serial.println(F(" UTF8toSjis file has not been uploaded to the flash in SD file system"));
     delay(30000);
+    return;
   }
 }
